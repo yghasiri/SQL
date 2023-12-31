@@ -25,28 +25,35 @@ VALUES
     (14, 'Cutlery Set', 'Kitchen Supplies', 34.50, 40, 4.4),
     (15, 'Cozy Throw Blanket', 'Furnishings', 24.99, 100, 4.2);
 
+#Use a SELECT statement to order the items by price.
 SELECT * FROM superstore 
 ORDER BY price;
 
+#Show a statistic about the item prices.
 SELECT AVG (price), item_name 
 FROM superstore;
 
+#Show a statistic about the item prices.
 SELECT MAX (price), item_name 
 FROM superstore;
 
+#Show a statistic about the price for items in the category of 'Kitchen Supplies'.
 SELECT MIN (price), item_name 
 FROM superstore 
 WHERE category = 'Kitchen Supplies';
 
+#Show a statistic about the item stock quantity for the item 'Air Purifier'.
 SELECT COUNT (stock_quantity) 
 FROM superstore 
 WHERE item_name = 'Air Purifier';
 
+#Show the descending prices of items in the category of 'Electronics'. 
 SELECT * 
 FROM superstore 
 WHERE category = 'Electronics' 
 ORDER BY (price) desc;
 
+#Show the highest rated item in the category of 'Appliances'.
 SELECT MAX (average_rating), item_name 
 FROM superstore 
 WHERE category = 'Appliances';
