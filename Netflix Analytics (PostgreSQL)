@@ -60,18 +60,20 @@ VALUES
     ('s20', NULL, 'Blanca SuÃ¡rez| IvÃ¡n Marcos| Ã“scar Casas| AdriÃ¡n Lastra| Francesc Garrido| Stefan Weinert| Julia MÃ¶ller| Alicia Chojnowski')
     ;
 
-#Explore data set in first table by seeing how many rows there are 
+#Analysis
+
+#Explore the data set in the first table by seeing how many rows there are 
 SELECT COUNT(*) FROM "netflix_people"
 
-#Explore data set to see what the example of what the rows are
+#Explore the data set to see what the example of what the rows are
   #It looks like we're missing some information 
 SELECT * FROM "netflix_people" 
 LIMIT 5
 
-#Explore data set in second table by seeing how many rows there are 
+#Explore the data set in the second table by seeing how many rows there are 
 SELECT COUNT(*) FROM "netflix_titles_info"
 
-#Explore data set to see what the example of what the rows are
+#Explore the data set to see what the example of what the rows are
   #There is some missing information in this table 
   #show_id is the relational data 
 SELECT * FROM "netflix_titles_info"
