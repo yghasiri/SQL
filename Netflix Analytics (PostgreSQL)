@@ -79,7 +79,7 @@ SELECT COUNT(*) FROM "netflix_titles_info"
 SELECT * FROM "netflix_titles_info"
 LIMIT 5
 
-#Join tables together to what projects each director worked on
+#Join tables together to see which projects each director worked on
 SELECT people.show_id,
 people.director, 
 titles.title,
