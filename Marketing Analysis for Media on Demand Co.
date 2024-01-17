@@ -1,5 +1,5 @@
-# For this analysis I looked at the data from a meida on demand provider from a marketing lens. 
-## I looked for opportunities to reengaged current and former customers, and the data needed to support these campaigns. 
+# For this analysis, I looked at the data from a media on demand provider from a marketing lens. 
+## I looked for opportunities to reengage current and former customers and the data needed to support these campaigns. 
 
 # What are the top 5 selling countries and their revenue? 
 
@@ -26,7 +26,7 @@ GROUP BY Country
 ORDER BY num_employees DESC
 
 # Pull an email list for American and Canadian customers for an email marketing campaign that is segmented by genre interest.
-# In order to determin the genre of items purchased by specific customers, I needed to join a series of tables. I had to connect GenreID to the TrackID, then the TrackId to the InvoiceID, which I then connected to the CustomerID 
+# To determine the genre of items purchased by specific customers, I needed to join a series of tables. I had to connect the GenreID to the TrackID, then the TrackId to the InvoiceID, which I then connected to the CustomerID 
 
 SELECT
     c.FirstName, c.LastName, c.Email,
@@ -51,8 +51,8 @@ SELECT
     (SELECT COUNT(PlaylistId) FROM chinook.playlist_track WHERE PlaylistID IN (2, 3)) * 100.0 / 
     (SELECT COUNT(PlaylistId) FROM chinook.playlist_track) AS "Movies and TV Percentage";
     
-# What is the top selling media type and the revenue it generated?
-# In order to know the how much a partiular media type sold, I needed to connect the name of the media, to the PlaylistID, the PlaylistID to the TrackID. The TrackID is what is connected to the quanity and unit price sold. 
+# What is the top-selling media type and the revenue it generates?
+# In order to know how much a particular media type sold, I needed to connect the name of the media to the PlaylistID, the PlaylistID, and the TrackID. The TrackID is what is connected to the quantity and unit price sold. 
 
 SELECT
     p.PlaylistId,
@@ -72,8 +72,8 @@ ORDER BY
     total_revenue DESC
 LIMIT 1;
 
-# Which customers should recieve a discount for being a loyal patron?
-# The number of invoices is in a seperate table from the customer contact information. 
+# Which customers should receive a discount for being loyal patrons?
+# The number of invoices is in a separate table from the customer contact information. 
 
 SELECT
     COUNT(i.InvoiceId) AS total_invoices, i.CustomerId, c.FirstName, c.LastName, c.Email,
@@ -105,7 +105,7 @@ ORDER BY
     num_track_sales DESC
 LIMIT 1;
 
-# Find the customers with the most reports submitted in order to give them a discount for their inconvience and rebuild the customer relationship.
+# Find the customers with the most reports submitted in order to give them a discount for their inconvenience and rebuild the customer relationship.
 
 SELECT 
     COUNT(SupportRepId) AS num_reports, 
@@ -119,7 +119,7 @@ HAVING
 ORDER BY
     num_reports DESC;
     
-# Pull an email list for customers who purchased in the last two years for a retargetting campagin.
+# Pull an email list of customers who purchased in the last two years for a retargeting campaign.
 
 SELECT
     i.CustomerId, c.FirstName, c.LastName, c.Email
