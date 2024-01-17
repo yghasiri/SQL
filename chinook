@@ -1,0 +1,148 @@
+# For this analysis I looked at the data from a meida on demand provider from a marketing lens. 
+## I looked for opportunities to reengaged current and former customers, and the data needed to support these campaigns. 
+
+# What are the top 5 selling countries and their revenue? 
+
+SELECT
+    SUM(Total) AS total_revenue, BillingCountry
+FROM 
+    chinook.invoices
+GROUP BY 
+    BillingCountry
+ORDER BY 
+    total_revenue DESC
+LIMIT 
+    5        
+
+# How many sales support agents are in each of the top 5 selling countries?
+
+SELECT
+    COUNT(Title) AS num_employees, Country
+FROM
+    chinook.employees    
+WHERE 
+     Country IN ("USA", "Canada", "France", "Brazil", "Germany") AND Title = "Sales Support Agent"
+GROUP BY Country
+ORDER BY num_employees DESC
+
+# Pull an email list for American and Canadian customers for an email marketing campaign that is segmented by genre interest.
+# In order to determin the genre of items purchased by specific customers, I needed to join a series of tables. I had to connect GenreID to the TrackID, then the TrackId to the InvoiceID, which I then connected to the CustomerID 
+
+SELECT
+    c.FirstName, c.LastName, c.Email,
+    g.Name AS Genre
+FROM
+    chinook.customers c
+JOIN
+    chinook.invoices i ON c.CustomerId = i.CustomerId
+JOIN
+    chinook.invoice_items ii ON i.InvoiceId = ii.InvoiceId
+JOIN
+    chinook.tracks t ON ii.TrackId = t.TrackId
+JOIN
+    chinook.genres g ON t.GenreId = g.GenreId
+WHERE
+    c.Country IN ("USA","Canada");
+
+# What percent of tracks sold were movies and TV shows? 2 and 3
+# 2 and 3 represent "Movies" and "TV Shows" in the "playlists" table
+
+SELECT 
+    (SELECT COUNT(PlaylistId) FROM chinook.playlist_track WHERE PlaylistID IN (2, 3)) * 100.0 / 
+    (SELECT COUNT(PlaylistId) FROM chinook.playlist_track) AS "Movies and TV Percentage";
+    
+# What is the top selling media type and the revenue it generated?
+# In order to know the how much a partiular media type sold, I needed to connect the name of the media, to the PlaylistID, the PlaylistID to the TrackID. The TrackID is what is connected to the quanity and unit price sold. 
+
+SELECT
+    p.PlaylistId,
+    p.Name AS MediaType,
+    SUM(ii.UnitPrice*ii.Quantity) AS total_revenue
+FROM
+    chinook.playlists p
+JOIN
+    chinook.playlist_track pt ON p.PlaylistId = pt.PlaylistId
+JOIN
+    chinook.tracks t ON pt.TrackId = t.TrackId
+JOIN
+    chinook.invoice_items ii ON t.TrackId = ii.TrackId
+GROUP BY
+    p.PlaylistId, p.Name
+ORDER BY
+    total_revenue DESC
+LIMIT 1;
+
+# Which customers should recieve a discount for being a loyal patron?
+# The number of invoices is in a seperate table from the customer contact information. 
+
+SELECT
+    COUNT(i.InvoiceId) AS total_invoices, i.CustomerId, c.FirstName, c.LastName, c.Email,
+    CASE 
+        WHEN COUNT(i.InvoiceId) >= 5 THEN "Very Loyal"
+        WHEN COUNT(i.InvoiceId) >= 3 AND COUNT(i.InvoiceId) < 5 THEN "Loyal"
+        ELSE 'Normal'
+    END AS customer_loyalty
+FROM
+    chinook.invoices i
+JOIN
+    chinook.customers c ON i.CustomerId = c.CustomerId
+GROUP BY
+    i.CustomerId, c.FirstName, c.LastName, c.Email
+ORDER BY
+    total_invoices DESC;
+
+# Which track sold the most?
+
+SELECT 
+    COUNT(ii.TrackId) AS num_track_sales, t.name
+FROM 
+    chinook.invoice_items ii
+JOIN 
+    chinook.tracks t ON ii.TrackId = t.TrackId
+GROUP BY 
+    t.name
+ORDER BY 
+    num_track_sales DESC
+LIMIT 1;
+
+# Find the customers with the most reports submitted in order to give them a discount for their inconvience and rebuild the customer relationship.
+
+SELECT 
+    COUNT(SupportRepId) AS num_reports, 
+    CustomerId, FirstName, LastName, Email   
+FROM 
+    chinook.customers
+GROUP BY 
+    CustomerId, FirstName, LastName, Email
+HAVING
+    num_reports > 2     
+ORDER BY
+    num_reports DESC;
+    
+# Pull an email list for customers who purchased in the last two years for a retargetting campagin.
+
+SELECT
+    i.CustomerId, c.FirstName, c.LastName, c.Email
+FROM
+    chinook.invoices i  
+JOIN chinook.customers c ON i.CustomerId = c.CustomerId    
+WHERE
+    InvoiceDate >= "2022-01-01"  
+
+# Which customers spent above the average of the invoice data set?
+
+SELECT
+    c.CustomerId,
+    c.FirstName,
+    c.LastName,
+    SUM(i.Total) AS TotalSpent,
+    (SELECT AVG(Total) FROM chinook.invoices) AS AvgInvoiceAmount
+FROM
+    chinook.customers c
+JOIN
+    chinook.invoices i ON c.CustomerId = i.CustomerId
+GROUP BY
+    c.CustomerId, c.FirstName, c.LastName
+HAVING
+    TotalSpent > AvgInvoiceAmount;
+
